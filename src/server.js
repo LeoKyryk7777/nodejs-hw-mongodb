@@ -1,14 +1,17 @@
 import dotenv from 'dotenv';
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import pino from 'pino-http';
 import cors from 'cors';
+import authRouter from './routers/auth.js';
 
 import contactsRouter from './routers/contacts.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import { authenticate } from './middlewares/authenticate.js';
 
-const PORT = process.env.PORT || 3000;
 dotenv.config();
+const PORT = process.env.PORT || 3000;
 
 export function setupServer() {
   const app = express();
@@ -27,8 +30,9 @@ export function setupServer() {
   //   }),
   // );
 
-  app.use(express.json());
-  app.use(contactsRouter);
+  app.use(cookieParser());
+  app.use('/auth', authRouter);
+  app.use('/contacts', authenticate, contactsRouter);
 
   app.use('*', notFoundHandler);
 

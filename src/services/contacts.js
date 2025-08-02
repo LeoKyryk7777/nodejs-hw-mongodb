@@ -6,10 +6,11 @@ export async function findAllContacts(
   sortBy,
   sortOrder,
   filter,
+  userId,
 ) {
   const skip = page > 0 ? (page - 1) * perPage : 0;
 
-  const contactQuery = Contact.find();
+  const contactQuery = Contact.find({ userId });
 
   if (filter.type) {
     contactQuery.where('contactType').equals(filter.type);
@@ -36,18 +37,20 @@ export async function findAllContacts(
   };
 }
 
-export function findContactsById(contactId) {
-  return Contact.findById(contactId);
+export function findContactsById(contactId, userId) {
+  return Contact.findOne({ _id: contactId, userId });
 }
 
 export function createContact(payload) {
   return Contact.create(payload);
 }
 
-export function deleteContact(contactId) {
-  return Contact.findByIdAndDelete(contactId);
+export function deleteContact(contactId, userId) {
+  return Contact.findOneAndDelete({ _id: contactId, userId });
 }
 
-export function apdateContact(contactId, payload) {
-  return Contact.findByIdAndUpdate(contactId, payload, { new: true });
+export function apdateContact(contactId, payload, userId) {
+  return Contact.findOneAndUpdate({ _id: contactId, userId }, payload, {
+    new: true,
+  });
 }

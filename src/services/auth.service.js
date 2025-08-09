@@ -1,8 +1,20 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import crypto from 'node:crypto';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import handlebars from 'handlebars';
 import createHttpError from 'http-errors';
 import { User } from '../models/user.js';
-import bcrypt from 'bcrypt';
+
 import { Session } from '../models/session.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
+import { sendMail } from '../utils/sendMail.js';
+
+const REQUEST_PASSWORD_RESET_TEMPLATE = fs.readFileSync(
+  path.resolve('src/templates/request-password-reset.hbs'),
+  { encoding: 'utf-8' },
+);
 
 export async function registerUser(payload) {
   const user = await User.findOne({ email: payload.email });
@@ -31,7 +43,7 @@ export async function loginUser(email, password) {
     userId: user._id,
     accessToken: crypto.randomBytes(30).toString('base64'),
     refreshToken: crypto.randomBytes(30).toString('base64'),
-    accessTokenValidUntil: new Date(Date.now() + 15 * 60 * 1000),
+    accessTokenValidUntil: new Date(Date.now() + 200 * 60 * 1000),
     refreshTokenValidUntil: new Date(Date.now() + 30 * 60 * 60 * 1000),
   });
 }
@@ -60,7 +72,54 @@ export async function refreshSession(sessionId, refreshToken) {
     userId: session.userId,
     accessToken: crypto.randomBytes(30).toString('base64'),
     refreshToken: crypto.randomBytes(30).toString('base64'),
-    accessTokenValidUntil: new Date(Date.now() + 15 * 60 * 1000),
+    accessTokenValidUntil: new Date(Date.now() + 5 * 60 * 1000),
     refreshTokenValidUntil: new Date(Date.now() + 30 * 60 * 60 * 1000),
   });
+}
+
+export async function requestPasswordReset(email) {
+  const user = await User.findOne({ email });
+  if (user === null) {
+    return;
+  }
+
+  const token = jwt.sign(
+    { sub: user._id, name: user.name },
+    getEnvVar('JWT_SECRET'),
+    {
+      expiresIn: '5m',
+    },
+  );
+  const template = handlebars.compile(REQUEST_PASSWORD_RESET_TEMPLATE);
+
+  await sendMail({
+    to: email,
+    subject: 'Reset password',
+    html: template({
+      resetPasswordLink: `http://localhost:5050/reset-password/${token}`,
+    }),
+  });
+}
+
+export async function resetPassword(token, password) {
+  try {
+    const decoded = jwt.verify(token, getEnvVar('JWT_SECRET'));
+    const user = await User.findById(decoded.sub);
+
+    if (user === null) {
+      throw new createHttpError.NotFound('User not found!');
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await User.findByIdAndUpdate(user._id, { password: hashedPassword });
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      throw new createHttpError.Unauthorized('Token is expired or invalid.');
+    }
+    if (error.name === 'JsonWebTokenError') {
+      throw new createHttpError.Unauthorized('Token is unauthorized');
+    }
+    throw error;
+  }
 }

@@ -1,17 +1,18 @@
 import dotenv from 'dotenv';
+import path from 'node:path';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import pino from 'pino-http';
 import cors from 'cors';
 import authRouter from './routers/auth.js';
-
 import contactsRouter from './routers/contacts.js';
+import { getEnvVar } from './utils/getEnvVar.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { authenticate } from './middlewares/authenticate.js';
 
 dotenv.config();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(getEnvVar('PORT', 3000));
 
 export function setupServer() {
   const app = express();
@@ -31,6 +32,8 @@ export function setupServer() {
   // );
 
   app.use(cookieParser());
+
+  app.use('/photo', express.static(path.resolve('src/uploads/photo')));
   app.use('/auth', authRouter);
   app.use('/contacts', authenticate, contactsRouter);
 

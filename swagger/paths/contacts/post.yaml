@@ -1,0 +1,27 @@
+tags:
+  - Contacts
+summary: Create contacts
+operationId: createContacts
+description: 'Create a contact with payload'
+security:
+  - bearerAuth: []
+
+requestBody:
+  content:
+    multipart/form-data:
+      schema:
+        $ref: '../../components/schemas/contactRequest.yaml'
+
+responses:
+  '201':
+    description: Creates a contact
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/contactResponse.yaml'
+  '400':
+    $ref: '../../components/responses/400.yaml'
+  '401':
+    $ref: '../../components/responses/401.yaml'
+  '500':
+    $ref: '../../components/responses/401.yaml'

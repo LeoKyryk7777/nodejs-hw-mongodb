@@ -6,6 +6,8 @@ import {
   refreshController,
   requestPasswordResetController,
   resetPasswordController,
+  getOAuthController,
+  confirmOAuthCpntroller,
 } from '../controllers/auth.controllers.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../middlewares/validateBody.js';
@@ -14,6 +16,7 @@ import {
   loginSchema,
   requestPasswordResetSchema,
   resetPasswordSchema,
+  confirmOAuthSchema,
 } from '../validation/auth.js';
 
 const router = express.Router();
@@ -40,6 +43,14 @@ router.post(
   '/reset-pwd',
   validateBody(resetPasswordSchema),
   ctrlWrapper(resetPasswordController),
+);
+
+router.get('/get-oauth-url', ctrlWrapper(getOAuthController));
+
+router.post(
+  '/confirm-oauth',
+  validateBody(confirmOAuthSchema),
+  ctrlWrapper(confirmOAuthCpntroller),
 );
 
 export default router;

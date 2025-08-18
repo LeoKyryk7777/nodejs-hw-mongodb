@@ -18,10 +18,37 @@ responses:
     content:
       application/json:
         schema:
-          $ref: '../../components/schemas/contactResponse.yaml'
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: Contact created successfully
+            data:
+              $ref: '../../components/schemas/contactResponse.yaml'
   '400':
-    $ref: '../../components/responses/400.yaml'
+    description: Bad request
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 400
+            message:
+              type: string
+              example: Invalid input data
   '401':
     $ref: '../../components/responses/401.yaml'
   '500':
-    $ref: '../../components/responses/401.yaml'
+    $ref: '../../components/responses/500.yaml'

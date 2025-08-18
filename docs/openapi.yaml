@@ -13,6 +13,9 @@ tags:
 
 servers:
   - url: http://127.0.0.1:5050
+    description: Local server
+  - url: https://nodejs-hw-mongodb-4-al8v.onrender.com
+    description: Production server
 
 paths:
   /contacts:
@@ -23,11 +26,11 @@ paths:
 
   /contacts/{contactId}:
     get:
-      $ref: ../swagger/paths/contacts/{id}/get.yaml
+      $ref: ../swagger/paths/contacts/id/get.yaml
     patch:
-      $ref: ../swagger/paths/contacts/{id}/patch.yaml
+      $ref: ../swagger/paths/contacts/id/patch.yaml
     delete:
-      $ref: ../swagger/paths/contacts/{id}/delete.yaml
+      $ref: ../swagger/paths/contacts/id/delete.yaml
 
 components:
   securitySchemes:

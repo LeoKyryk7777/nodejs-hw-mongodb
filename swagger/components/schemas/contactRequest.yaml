@@ -3,7 +3,6 @@ required:
   - name
   - phoneNumber
   - contactType
-  - photo
 properties:
   name:
     type: string

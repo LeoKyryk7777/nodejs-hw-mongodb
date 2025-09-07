@@ -26,12 +26,6 @@ requestBody:
           phoneNumber:
             type: string
             example: '+380987654321'
-          email:
-            type: string
-            example: 'jane.doe@example.com'
-          isFavourite:
-            type: boolean
-            example: true
           contactType:
             type: string
             enum: ['work', 'personal', 'other']

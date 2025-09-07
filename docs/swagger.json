@@ -370,30 +370,7 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "Jane Doe"
-                  },
-                  "phoneNumber": {
-                    "type": "string",
-                    "example": "+380987654321"
-                  },
-                  "contactType": {
-                    "type": "string",
-                    "enum": [
-                      "work",
-                      "personal",
-                      "other"
-                    ],
-                    "example": "personal"
-                  },
-                  "photo": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
+                "$ref": "#/components/schemas/contactUpdateRequest"
               }
             }
           }
@@ -603,6 +580,39 @@
           "isFavourite": {
             "type": "boolean",
             "default": false
+          },
+          "photo": {
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      },
+      "contactUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "+380942845375"
+          },
+          "email": {
+            "type": "string",
+            "example": "vasyl9@example.com"
+          },
+          "contactType": {
+            "type": "string",
+            "enum": [
+              "work",
+              "home",
+              "personal"
+            ]
+          },
+          "isFavourite": {
+            "type": "boolean",
+            "example": true
           },
           "photo": {
             "type": "string",

@@ -18,21 +18,7 @@ requestBody:
   content:
     multipart/form-data:
       schema:
-        type: object
-        properties:
-          name:
-            type: string
-            example: 'Jane Doe'
-          phoneNumber:
-            type: string
-            example: '+380987654321'
-          contactType:
-            type: string
-            enum: ['work', 'personal', 'other']
-            example: 'personal'
-          photo:
-            type: string
-            format: binary
+        $ref: ../../../components/schemas/contactUpdateRequest.yaml
 
 responses:
   '200':
